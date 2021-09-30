@@ -2,13 +2,12 @@
 
 function love.load() 
     target = {}
-    target.x = 100
-    target.y = 100
     target.radius = 50
 
     score = 0
     timer = 0
 
+    -- gs 1 = menu state, gs 2 = play
     gameState = 1
 
     gameFont = love.graphics.newFont(40)
@@ -45,12 +44,13 @@ function love.draw()
     if gameState == 2 then
         love.graphics.draw(sprites.target, target.x - target.radius, target.y - target.radius)
     end
+    
     love.graphics.draw(sprites.crosshairs, love.mouse.getX() - 20, love.mouse.getY() - 20)
-
     love.mouse.setVisible(false)
 end
 
 function love.mousepressed( x, y, button, istouch, presses )
+    -- Normal shooting
     if button == 1 and gameState == 2 then
         local mouseToTarget = distBetween(x,y, target.x, target.y)
         if mouseToTarget < target.radius then
@@ -61,6 +61,7 @@ function love.mousepressed( x, y, button, istouch, presses )
         end
     end
 
+    -- Right click for double score, but at the cost of 1 second
     if button == 2 and gameState == 2 then 
         local mouseToTarget = distBetween(x,y, target.x, target.y)
         if mouseToTarget < target.radius then
@@ -73,10 +74,12 @@ function love.mousepressed( x, y, button, istouch, presses )
         end
     end
         
+    -- Start the timer, reset the score, set new target position, go to play state
     if gameState == 1 then 
         gameState = 2
         score = 0
         timer = 10
+        setNewTargetPosition()
     end
 end
 
